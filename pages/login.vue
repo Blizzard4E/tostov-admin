@@ -53,7 +53,7 @@ const handleLogin = async () => {
 	if ("admin" in response && "success" in response) {
 		const { admin, success } = response;
 		if (success) {
-			navigateTo("/dashboard/businesses");
+			navigateTo("/dashboard");
 		}
 	}
 };
