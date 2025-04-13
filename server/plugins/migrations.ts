@@ -3,15 +3,13 @@ import { migrate } from "drizzle-orm/mysql2/migrator";
 export default defineNitroPlugin(async () => {
 	if (!import.meta.dev) return;
 
-	onHubReady(async () => {
-		await migrate(await useDrizzle(), {
-			migrationsFolder: "server/database/migrations",
+	await migrate(await useDrizzle(), {
+		migrationsFolder: "server/database/migrations",
+	})
+		.then(() => {
+			console.log("Database migrations done");
 		})
-			.then(() => {
-				console.log("Database migrations done");
-			})
-			.catch((err) => {
-				console.log("Database migrations failed", err);
-			});
-	});
+		.catch((err) => {
+			console.log("Database migrations failed", err);
+		});
 });
