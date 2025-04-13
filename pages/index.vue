@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div>Hello, TosTov</div>
-		<NuxtLink to="/dashboard"><Button>Go Dashboard</Button></NuxtLink>
+		<NuxtLink to="/login"><Button>Login</Button></NuxtLink>
 	</div>
 </template>
 
