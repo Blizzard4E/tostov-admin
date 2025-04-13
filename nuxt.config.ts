@@ -10,15 +10,7 @@ export default defineNuxtConfig({
 		plugins: [tailwindcss()],
 	},
 
-	modules: [
-		"shadcn-nuxt",
-		"@nuxtjs/color-mode",
-		"@nuxt/fonts",
-		"@nuxthub/core",
-	],
-	hub: {
-		database: true,
-	},
+	modules: ["shadcn-nuxt", "@nuxtjs/color-mode", "@nuxt/fonts"],
 	runtimeConfig: {
 		// The private keys which are only available within server-side
 		mysqlHost: "",
@@ -46,5 +38,8 @@ export default defineNuxtConfig({
 	},
 	colorMode: {
 		classSuffix: "",
+	},
+	nitro: {
+		preset: "node-server",
 	},
 });
