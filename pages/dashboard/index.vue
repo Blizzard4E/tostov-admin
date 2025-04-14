@@ -1,17 +1,15 @@
 <template>
 	<div>
-		<h1 class="text-2xl font-bold mb-4">Dashboord</h1>
 		<div class="grid gap-4">
-			<NuxtLink to="/dashboard/businesses">
-				<Button>Businesses</Button>
-			</NuxtLink>
-			<NuxtLink to="/dashboard/locations">
-				<Button>Locations</Button>
-			</NuxtLink>
+			<ClientOnly>
+				<h1>Welcome, {{ userState?.name }}</h1></ClientOnly
+			>
 		</div>
 	</div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const { userState } = useAuth();
+</script>
 
 <style></style>

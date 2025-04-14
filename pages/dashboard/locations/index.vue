@@ -11,9 +11,11 @@
 					<TableRow>
 						<TableHead class="w-[80px]">ID</TableHead>
 						<TableHead>Name</TableHead>
+						<TableHead>Category</TableHead>
+						<TableHead>Description</TableHead>
 						<TableHead>Address</TableHead>
 						<TableHead>Business</TableHead>
-						<TableHead>Description</TableHead>
+
 						<TableHead class="w-[120px]">Images</TableHead>
 						<TableHead class="w-[120px]">Videos</TableHead>
 					</TableRow>
@@ -26,10 +28,17 @@
 						<TableCell class="font-medium">
 							{{ location.id }}
 						</TableCell>
-						<TableCell>{{ location.name }}</TableCell>
+						<TableCell>{{ location.name }}</TableCell
+						><TableCell>{{
+							location.categories.length > 0
+								? location.categories[0].name
+								: ""
+						}}</TableCell>
+						<TableCell>{{ location.description }}</TableCell>
+
 						<TableCell>{{ location.address }}</TableCell>
 						<TableCell>{{ location.businessId }}</TableCell>
-						<TableCell>{{ location.description }}</TableCell>
+
 						<TableCell>
 							<div class="flex flex-col items-center">
 								<h3
@@ -97,6 +106,11 @@ interface Location {
 		url: string;
 		locationId: number;
 		createdAt: string;
+	}[];
+	categories: {
+		id: number;
+		name: string;
+		assignedAt: Date | null;
 	}[];
 }
 

@@ -29,6 +29,36 @@
 								placeholder="name"
 							/>
 						</div>
+						<div v-if="categoriesData && categoriesData.data">
+							<Label for="category">Category</Label>
+							<Select id="category" v-model="categoryId">
+								<SelectTrigger class="w-full">
+									<SelectValue
+										placeholder="Select a category"
+									/>
+								</SelectTrigger>
+								<SelectContent>
+									<SelectGroup>
+										<SelectLabel>Categories</SelectLabel>
+										<SelectItem
+											v-for="catgory in categoriesData.data"
+											:value="catgory.id"
+											:key="catgory.id"
+										>
+											{{ catgory.name }}
+										</SelectItem>
+									</SelectGroup>
+								</SelectContent>
+							</Select>
+						</div>
+						<div class="flex flex-col space-y-1.5">
+							<Label for="description">Description</Label>
+							<Textarea
+								v-model="description"
+								id="description"
+								placeholder="description"
+							/>
+						</div>
 						<div class="flex flex-col space-y-1.5">
 							<Label for="address">Address</Label>
 							<Input
@@ -45,14 +75,7 @@
 								placeholder="gmapLink"
 							/>
 						</div>
-						<div class="flex flex-col space-y-1.5">
-							<Label for="description">Description</Label>
-							<Textarea
-								v-model="description"
-								id="description"
-								placeholder="description"
-							/>
-						</div>
+
 						<div class="flex flex-col space-y-1.5">
 							<Label for="images">Images</Label>
 							<Input
@@ -104,6 +127,7 @@ const businessId = ref("");
 const emit = defineEmits(["success"]);
 const selectedImages = ref<File[]>([]);
 const selectedVideos = ref<File[]>([]);
+const categoryId = ref<string | null>(null);
 
 const handleCreate = async () => {
 	const formData = new FormData();
@@ -112,13 +136,16 @@ const handleCreate = async () => {
 	formData.append("gmapLink", gmapLink.value);
 	formData.append("description", description.value);
 	formData.append("businessId", businessId.value);
+	if (categoryId.value !== null) {
+		formData.append("categoryId", categoryId.value);
+	}
 	selectedImages.value.forEach((image) => {
 		formData.append("images", image);
 	});
 	selectedVideos.value.forEach((video) => {
 		formData.append("videos", video);
 	});
-	const response = await $fetch("/api/locations/create", {
+	const response = await $fetch("/api/locations", {
 		method: "POST",
 		body: formData,
 	});
@@ -161,6 +188,14 @@ function handleVideoUpload(event: Event) {
 		}
 	}
 }
+
+const {
+	data: categoriesData,
+	status: categoriesStatus,
+	refresh: categoriesRefresh,
+} = await useFetch("/api/categories", {
+	method: "GET",
+});
 </script>
 
 <style></style>

@@ -1,5 +1,10 @@
 // server/api/location/create.post.ts
-import { locations, images, videos } from "~/server/database/schema";
+import {
+	locations,
+	images,
+	videos,
+	categoryOnLocations,
+} from "~/server/database/schema";
 import { ServerFile } from "nuxt-file-storage";
 
 export default defineEventHandler(async (event) => {
@@ -22,6 +27,7 @@ export default defineEventHandler(async (event) => {
 			gmapLink: "",
 			description: "",
 			businessId: 0,
+			categoryId: 0, // Single category ID
 		};
 
 		const imageFiles: ServerFile[] = [];
@@ -42,6 +48,16 @@ export default defineEventHandler(async (event) => {
 					locationData.gmapLink = parsedData.gmapLink;
 					locationData.description = parsedData.description;
 					locationData.businessId = parseInt(parsedData.businessId);
+
+					// Get category ID from JSON data if present
+					if (parsedData.categoryId) {
+						const categoryId = parseInt(
+							parsedData.categoryId.toString()
+						);
+						if (!isNaN(categoryId)) {
+							locationData.categoryId = categoryId;
+						}
+					}
 				} catch (e) {
 					return createError({
 						statusCode: 400,
@@ -68,6 +84,13 @@ export default defineEventHandler(async (event) => {
 					type: part.type || "application/octet-stream",
 					lastModified: new Date().toISOString(),
 				});
+			} else if (part.name === "categoryId") {
+				// Handle category ID from form field
+				const value = Buffer.from(part.data).toString();
+				const categoryId = parseInt(value);
+				if (!isNaN(categoryId)) {
+					locationData.categoryId = categoryId;
+				}
 			} else if (part.name) {
 				// Handle regular form fields
 				const value = Buffer.from(part.data).toString();
@@ -114,6 +137,19 @@ export default defineEventHandler(async (event) => {
 				businessId: locationData.businessId,
 			})
 			.$returningId();
+
+		// Create category relationship if categoryId is provided
+		let categoryId = null;
+		if (locationData.categoryId > 0) {
+			// Create category-location relation
+			await db.insert(categoryOnLocations).values({
+				locationId: newLocation.id,
+				categoryId: locationData.categoryId,
+				assignedAt: new Date(),
+			});
+
+			categoryId = locationData.categoryId;
+		}
 
 		// Store images and add to database
 		const uploadedImages = [];
@@ -184,6 +220,7 @@ export default defineEventHandler(async (event) => {
 		return {
 			success: true,
 			location: newLocation,
+			categoryId: categoryId,
 			images: uploadedImages,
 			videos: uploadedVideos,
 		};
