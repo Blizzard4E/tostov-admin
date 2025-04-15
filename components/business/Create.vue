@@ -62,7 +62,7 @@ const password = ref("");
 const emit = defineEmits(["success"]);
 
 const handleCreate = async () => {
-	const response = await $fetch("/api/businesses/create", {
+	const response = await $fetch("/api/businesses", {
 		method: "POST",
 		body: {
 			name: name.value,
